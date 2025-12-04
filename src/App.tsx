@@ -238,6 +238,33 @@ function LandingPage() {
   )
 }
 
+// Component to ensure favicon is set
+function FaviconSetter() {
+  useEffect(() => {
+    // Ensure favicon is set
+    let favicon = document.querySelector("link[rel='icon']") as HTMLLinkElement
+    if (!favicon) {
+      favicon = document.createElement('link')
+      favicon.rel = 'icon'
+      favicon.type = 'image/png'
+      document.head.appendChild(favicon)
+    }
+    favicon.href = '/favicon.png'
+    
+    // Also set shortcut icon
+    let shortcutIcon = document.querySelector("link[rel='shortcut icon']") as HTMLLinkElement
+    if (!shortcutIcon) {
+      shortcutIcon = document.createElement('link')
+      shortcutIcon.rel = 'shortcut icon'
+      shortcutIcon.type = 'image/png'
+      document.head.appendChild(shortcutIcon)
+    }
+    shortcutIcon.href = '/favicon.png'
+  }, [])
+
+  return null
+}
+
 // Component to set page title based on route
 function PageTitle() {
   const location = useLocation()
@@ -276,6 +303,7 @@ function AppRoutes() {
 
   return (
     <>
+      <FaviconSetter />
       <PageTitle />
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
