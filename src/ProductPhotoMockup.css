@@ -1,0 +1,865 @@
+/* Product Photo Mockup Styles */
+
+/* Main Container Layout */
+.mockup-container {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  min-height: 100vh;
+}
+
+/* Controls Panel */
+.mockup-controls-panel {
+  background: rgba(17, 17, 17, 0.95);
+  padding: 40px 32px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  backdrop-filter: blur(20px);
+}
+
+.mockup-controls-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mockup-controls-header .logo-icon {
+  opacity: 0.9;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.mockup-controls-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #ffffff 0%, #c4cbef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Template Selection */
+.template-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.template-section label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.template-button {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.template-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.template-button.active {
+  background: rgba(82, 114, 250, 0.15);
+  border-color: rgba(82, 114, 250, 0.5);
+}
+
+.template-button span {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.template-button.active span {
+  color: #5272FA;
+}
+
+/* Sub-options Section */
+.sub-options-section {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sub-options-section label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.sub-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sub-option-button {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sub-option-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sub-option-button.active {
+  background: rgba(82, 114, 250, 0.15);
+  border-color: rgba(82, 114, 250, 0.5);
+}
+
+.sub-option-button span {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.sub-option-button.active span {
+  color: #5272FA;
+}
+
+/* Theme Controls */
+.theme-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.theme-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-switcher label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.theme-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.theme-button {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-button.active {
+  background: rgba(82, 114, 250, 0.15);
+  border-color: rgba(82, 114, 250, 0.5);
+  color: #5272FA;
+}
+
+.btn-randomize {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-randomize:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-randomize:active {
+  transform: scale(0.98);
+}
+
+.btn-randomize svg {
+  opacity: 0.8;
+}
+
+/* Upload Section */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upload-section label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.upload-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.02);
+  min-height: 160px;
+  justify-content: center;
+}
+
+.upload-zone:hover {
+  border-color: rgba(82, 114, 250, 0.4);
+  background: rgba(82, 114, 250, 0.05);
+}
+
+.upload-zone.dragging {
+  border-color: #5272FA;
+  background: rgba(82, 114, 250, 0.1);
+  transform: scale(1.02);
+}
+
+.upload-zone.has-image {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  cursor: default;
+}
+
+.upload-icon {
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
+}
+
+.upload-zone p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  text-align: center;
+}
+
+.upload-hint {
+  font-size: 12px !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.upload-preview {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.upload-preview img {
+  max-width: 100%;
+  max-height: 120px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.btn-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 93, 77, 0.9);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-remove:hover {
+  background: #ff5d4d;
+  transform: scale(1.1);
+}
+
+/* Image Controls */
+.image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.image-controls label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.image-controls .slider-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.image-controls input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.image-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #5272FA 0%, #ff5d4d 100%);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.image-controls input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.slider-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  min-width: 45px;
+  text-align: right;
+}
+
+.control-hint {
+  font-size: 12px !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+  margin: 4px 0 0 0 !important;
+}
+
+/* Multi-image controls for snapshots 2 & 3 */
+.multi-image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.image-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.image-control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.image-control-header label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0;
+}
+
+.btn-remove-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 93, 77, 0.1);
+  border: 1px solid rgba(255, 93, 77, 0.3);
+  border-radius: 6px;
+  color: #ff5d4d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.btn-remove-small:hover {
+  background: rgba(255, 93, 77, 0.2);
+  border-color: rgba(255, 93, 77, 0.5);
+  transform: scale(1.1);
+}
+
+/* Download Button */
+.mockup-controls-panel .btn-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #5272FA 0%, #ff5d4d 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 18px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
+}
+
+.mockup-controls-panel .btn-download:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(82, 114, 250, 0.3);
+}
+
+.mockup-controls-panel .btn-download:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.mockup-controls-panel .btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mockup-controls-panel .btn-download.loading {
+  pointer-events: none;
+}
+
+.mockup-controls-panel .hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  margin: 0;
+}
+
+/* Preview Panel */
+.mockup-preview-panel {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow: auto;
+  background: #000000;
+  background-image: 
+    radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+}
+
+.mockup-preview-panel h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.btn-reset {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reset:hover:not(:disabled) {
+  background: rgba(255, 93, 77, 0.1);
+  border-color: rgba(255, 93, 77, 0.3);
+  color: #ff5d4d;
+}
+
+.btn-reset:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mockup-preview-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mockup-scale-container {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  /* Height will be set dynamically via inline style */
+}
+
+/* ========== MOCKUP STYLES (Pixel Perfect from Figma) ========== */
+/* Mockup dimensions: 1440x906 (full-screen) or 1440x1024 (zoomed-screen) */
+.mockup {
+  background: #111111;
+  position: relative;
+  overflow: hidden;
+  transform: scale(0.7);
+  transform-origin: top left;
+}
+
+/* Background Image */
+.mockup-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.mockup-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fullscreen Container */
+.fullscreen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 48px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Device Frame - White container with rounded top-left corner */
+.device-frame {
+  position: absolute;
+  left: 71px;
+  top: 76px;
+  width: 1369px;
+  height: 948px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(189, 189, 189, 0.5);
+  border-radius: 80px 0 0 0;
+  backdrop-filter: blur(202px);
+  z-index: 10;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 16px 0 16px;
+  box-sizing: border-box;
+}
+
+/* Image Placement Area - Inner safe zone */
+.image-area {
+  width: 1337px;
+  height: 948px;
+  background: #ffffff;
+  border-radius: 16px 16px 0 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fullscreen Image Area */
+.image-area.fullscreen-area {
+  width: 1343px;
+  height: 810px;
+  background: #ffffff;
+  border: 1px solid #bdbdbd;
+  border-radius: 80px;
+  backdrop-filter: blur(202px);
+}
+
+/* Feature Snapshot Container */
+.feature-snapshot-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 80px 49px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Snapshot 1 Layout - Single image */
+.snapshot-1-layout {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Snapshot 2 Layout - Two side-by-side */
+.snapshot-2-layout {
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}
+
+/* Snapshot 3 Layout - One large left, two stacked right */
+.snapshot-3-layout {
+  width: 100%;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.snapshot-3-left {
+  display: flex;
+}
+
+.snapshot-3-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Snapshot Image Areas */
+.image-area.snapshot-area {
+  background: #ffffff;
+  border: 1px solid #bdbdbd;
+  border-radius: 62px;
+  backdrop-filter: blur(202px);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Ensure product images in snapshot areas fill completely and hide border */
+.image-area.snapshot-area .snapshot-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: none;
+  max-height: none;
+  object-fit: none;
+  border-radius: 0;
+}
+
+/* Snapshot images - no border radius on images themselves */
+.image-area.snapshot-area .snapshot-1-image {
+  border-radius: 0;
+}
+
+.image-area.snapshot-area .snapshot-2-image {
+  border-radius: 0;
+}
+
+.image-area.snapshot-area .snapshot-3-image {
+  border-radius: 0;
+}
+
+/* Snapshot 1 specific styling - 8px padding and 12px radius */
+.snapshot-1-image-container {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.snapshot-1-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+
+.product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+/* For feature snapshots, ensure images fill the area without border showing */
+.image-area.snapshot-area .product-image {
+  border-radius: 0;
+  object-fit: cover;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  height: 100%;
+}
+
+.placeholder:hover {
+  color: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.placeholder svg {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.placeholder:hover svg {
+  opacity: 0.7;
+}
+
+.placeholder p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .mockup-container {
+    grid-template-columns: 360px 1fr;
+  }
+  
+  .mockup {
+    transform: scale(0.56);
+  }
+}
+
+@media (max-width: 1100px) {
+  .mockup-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .mockup-controls-panel {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .mockup-preview-panel {
+    min-height: 60vh;
+  }
+  
+  .mockup-scale-container {
+    width: 100%;
+    max-width: 806px;
+  }
+  
+  .mockup {
+    transform: scale(0.56);
+  }
+}
+
+@media (max-width: 800px) {
+  .mockup-scale-container {
+    max-width: 604px;
+  }
+  
+  .mockup {
+    transform: scale(0.42);
+  }
+  
+  .template-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .template-button {
+    padding: 8px 4px;
+  }
+  
+  .template-preview {
+    width: 48px;
+    height: 34px;
+  }
+}
