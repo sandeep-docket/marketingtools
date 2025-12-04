@@ -299,7 +299,9 @@ function AppRoutes() {
             <MetaImageGenerator />
           </ProtectedRoute>
         } />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={
+          user ? <Navigate to="/" replace /> : <Navigate to="/login" replace />
+        } />
       </Routes>
     </>
   )
