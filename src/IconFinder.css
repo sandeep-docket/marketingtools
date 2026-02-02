@@ -396,6 +396,61 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
+.no-results .try-ai-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #967FD0 0%, #5272FA 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.no-results .try-ai-search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(150, 127, 208, 0.4);
+}
+
+/* Low Results Banner */
+.low-results-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(150, 127, 208, 0.15) 0%, rgba(82, 114, 250, 0.15) 100%);
+  border: 1px solid rgba(150, 127, 208, 0.3);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
+
+.low-results-banner svg {
+  color: #967FD0;
+  flex-shrink: 0;
+}
+
+.low-results-banner .inline-ai-btn {
+  background: none;
+  border: none;
+  color: #967FD0;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.low-results-banner .inline-ai-btn:hover {
+  color: #b39dea;
+}
+
 /* Preview Modal */
 .preview-modal-overlay {
   position: fixed;
