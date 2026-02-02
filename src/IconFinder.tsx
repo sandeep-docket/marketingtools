@@ -431,38 +431,141 @@ function IconFinder() {
     setShowAISearch(true)
   }, [])
 
-  // Generate mask URL from icon SVG for gradient display
+  // Generate gradient SVG for preview display
+  // Creates an SVG with embedded gradient applied directly to paths
+  const [gradientSvgContent, setGradientSvgContent] = useState<string | null>(null)
+  
   useEffect(() => {
     if (!selectedIcon || !iconMaskRef.current) {
       setIconMaskUrl(null)
+      setGradientSvgContent(null)
       return
     }
     
     // Small delay to ensure icon is rendered
     const timer = setTimeout(() => {
       const svgElement = iconMaskRef.current?.querySelector('svg')
+      
       if (svgElement) {
-        // Clone and modify the SVG for mask use
+        const currentColorConfig = COLOR_OPTIONS.find(c => c.id === selectedColor)
+        
+        // Clone the SVG
         const clone = svgElement.cloneNode(true) as SVGElement
         clone.setAttribute('width', '128')
         clone.setAttribute('height', '128')
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         
-        // Make all paths white for proper mask
-        clone.querySelectorAll('path, circle, rect, polygon, line, polyline').forEach(el => {
-          el.setAttribute('fill', 'white')
-          el.setAttribute('stroke', 'white')
+        // Ensure viewBox is properly set
+        if (!clone.getAttribute('viewBox')) {
+          clone.setAttribute('viewBox', '0 0 24 24')
+        }
+        
+        // For gradient mode, create SVG with embedded gradient
+        if (currentColorConfig?.type === 'gradient' && currentColorConfig.gradient) {
+          // Create gradient definition
+          const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
+          const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
+          gradient.setAttribute('id', 'icon-gradient-preview')
+          gradient.setAttribute('x1', '0%')
+          gradient.setAttribute('y1', '0%')
+          gradient.setAttribute('x2', '100%')
+          gradient.setAttribute('y2', '100%')
+          
+          const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+          stop1.setAttribute('offset', '0%')
+          stop1.setAttribute('stop-color', currentColorConfig.gradient.start)
+          
+          const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+          stop2.setAttribute('offset', '100%')
+          stop2.setAttribute('stop-color', currentColorConfig.gradient.end)
+          
+          gradient.appendChild(stop1)
+          gradient.appendChild(stop2)
+          defs.appendChild(gradient)
+          clone.insertBefore(defs, clone.firstChild)
+          
+          // Apply gradient to all paths/shapes
+          // Check if SVG root has fill="none" - indicates stroke-based icon
+          const svgRootFill = clone.getAttribute('fill')
+          const isStrokeBasedIcon = svgRootFill === 'none'
+          
+          clone.querySelectorAll('path, circle, rect, polygon, line, polyline, ellipse').forEach(el => {
+            const currentFill = el.getAttribute('fill')
+            const currentStroke = el.getAttribute('stroke')
+            
+            // For stroke-based icons (like Huge Icons), apply gradient to stroke only
+            if (isStrokeBasedIcon) {
+              // Only apply gradient to stroke, don't add fill
+              if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+                el.setAttribute('stroke', 'url(#icon-gradient-preview)')
+              }
+              if (currentStroke === 'currentColor') {
+                el.setAttribute('stroke', 'url(#icon-gradient-preview)')
+              }
+            } else {
+              // For fill-based icons (like Fluent Icons), apply gradient to fill
+              if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
+                el.setAttribute('fill', 'url(#icon-gradient-preview)')
+              }
+              // Apply gradient to stroke if element has stroke
+              if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+                el.setAttribute('stroke', 'url(#icon-gradient-preview)')
+              }
+              // If element uses currentColor, apply gradient
+              if (currentFill === 'currentColor') {
+                el.setAttribute('fill', 'url(#icon-gradient-preview)')
+              }
+              if (currentStroke === 'currentColor') {
+                el.setAttribute('stroke', 'url(#icon-gradient-preview)')
+              }
+            }
+          })
+          
+          // Also handle SVG root attributes
+          const svgFill = clone.getAttribute('fill')
+          const svgStroke = clone.getAttribute('stroke')
+          if (svgFill && svgFill !== 'none') {
+            clone.setAttribute('fill', 'url(#icon-gradient-preview)')
+          }
+          if (svgStroke && svgStroke !== 'none') {
+            clone.setAttribute('stroke', 'url(#icon-gradient-preview)')
+          }
+          
+          // Convert to data URL for display
+          const svgString = new XMLSerializer().serializeToString(clone)
+          setGradientSvgContent(svgString)
+        }
+        
+        // Also generate the mask URL for fallback (keep this for compatibility)
+        const maskClone = svgElement.cloneNode(true) as SVGElement
+        maskClone.setAttribute('width', '128')
+        maskClone.setAttribute('height', '128')
+        
+        // Force all elements to white for mask
+        maskClone.querySelectorAll('*').forEach(el => {
+          const element = el as SVGElement
+          const fill = element.getAttribute('fill')
+          const stroke = element.getAttribute('stroke')
+          
+          if (fill && fill !== 'none') {
+            element.setAttribute('fill', 'white')
+          }
+          if (stroke && stroke !== 'none') {
+            element.setAttribute('stroke', 'white')
+          }
         })
+        maskClone.setAttribute('fill', 'white')
+        maskClone.setAttribute('stroke', 'white')
         
-        // Convert to data URL
-        const svgString = new XMLSerializer().serializeToString(clone)
-        const encodedSvg = encodeURIComponent(svgString)
+        const maskSvgString = new XMLSerializer().serializeToString(maskClone)
+        const encodedSvg = encodeURIComponent(maskSvgString)
         const dataUrl = `url("data:image/svg+xml,${encodedSvg}")`
         setIconMaskUrl(dataUrl)
       }
-    }, 50)
+    }, 150)
     
     return () => clearTimeout(timer)
-  }, [selectedIcon])
+  }, [selectedIcon, selectedColor])
 
   return (
     <div className="icon-finder-container">
@@ -785,12 +888,12 @@ function IconFinder() {
             </button>
 
             <div className="preview-content" ref={previewRef}>
-              {/* Hidden icon for generating mask */}
+              {/* Hidden icon for generating mask - render with white for CSS mask */}
               <div 
                 ref={iconMaskRef}
                 style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
               >
-                {renderIcon(selectedIcon, 128, '#000000')}
+                {renderIcon(selectedIcon, 128, '#FFFFFF')}
               </div>
               
               {/* Icon Preview */}
@@ -813,8 +916,21 @@ function IconFinder() {
                     position: 'relative',
                   }}
                 >
-                  {currentColorConfig?.type === 'gradient' && iconMaskUrl ? (
-                    /* Gradient: use CSS mask with the icon shape */
+                  {currentColorConfig?.type === 'gradient' && gradientSvgContent ? (
+                    /* Gradient: render SVG with embedded gradient definition */
+                    <div 
+                      className="gradient-icon-display"
+                      style={{
+                        width: 128,
+                        height: 128,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      dangerouslySetInnerHTML={{ __html: gradientSvgContent }}
+                    />
+                  ) : currentColorConfig?.type === 'gradient' && iconMaskUrl ? (
+                    /* Gradient fallback: use CSS mask with the icon shape */
                     <div 
                       className="gradient-icon-display"
                       style={{
