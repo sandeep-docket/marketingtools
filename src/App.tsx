@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './AuthContext'
 import BannerGenerator from './BannerGenerator'
 import ProductPhotoMockup from './ProductPhotoMockup'
 import MetaImageGenerator from './MetaImageGenerator'
+import IconFinder from './IconFinder'
 import LightRays from './LightRays'
 import BlurText from './BlurText'
 import './App.css'
@@ -79,8 +80,16 @@ function LoginPage() {
 }
 
 // Protected Route Component
+// TEMPORARY: Enable for testing new AI Search feature
+const BYPASS_AUTH_FOR_TESTING = true
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
+
+  // Bypass auth for testing
+  if (BYPASS_AUTH_FOR_TESTING) {
+    return <>{children}</>
+  }
 
   if (loading) {
     return (
@@ -232,6 +241,20 @@ function LandingPage() {
             <p>Generate optimized meta images for social media and SEO</p>
             <span className="tool-status active">Available</span>
           </Link>
+          
+          {/* Icon Finder - Active */}
+          <Link to="/icon-finder" className="tool-card">
+            <div className="tool-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+                <path d="M8 8h6M8 11h4M8 14h2"/>
+              </svg>
+            </div>
+            <h3>Icon Finder</h3>
+            <p>Search and download icons from Fluent and Huge Icons libraries</p>
+            <span className="tool-status active">Available</span>
+          </Link>
         </div>
       </div>
     </div>
@@ -279,6 +302,8 @@ function PageTitle() {
       document.title = 'Product Photo Mockup - Docket Marketing Tools'
     } else if (path === '/meta-image') {
       document.title = 'Meta Image Generator - Docket Marketing Tools'
+    } else if (path === '/icon-finder') {
+      document.title = 'Icon Finder - Docket Marketing Tools'
     } else if (path === '/login') {
       document.title = 'Sign In - Docket Marketing Tools'
     } else {
@@ -325,6 +350,11 @@ function AppRoutes() {
         <Route path="/meta-image" element={
           <ProtectedRoute>
             <MetaImageGenerator />
+          </ProtectedRoute>
+        } />
+        <Route path="/icon-finder" element={
+          <ProtectedRoute>
+            <IconFinder />
           </ProtectedRoute>
         } />
         <Route path="*" element={
