@@ -53,9 +53,20 @@ const MAX_PROMPT_LENGTH = 500;
 const MAX_ICON_NAMES = 3000; // Allow more icon names for better AI coverage
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Set security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Validate Content-Type
+  const contentType = req.headers['content-type'];
+  if (!contentType || !contentType.includes('application/json')) {
+    return res.status(400).json({ error: 'Invalid content type' });
   }
 
   // Rate limiting
@@ -64,7 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
-  // Check for API key
+  // Check for API key (server-side only - never exposed to client)
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     console.error('ANTHROPIC_API_KEY not found in environment');
@@ -84,13 +95,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Invalid icon names' });
     }
 
-    // Sanitize and limit input
-    const sanitizedPrompt = prompt.slice(0, MAX_PROMPT_LENGTH).trim();
+    // Sanitize and limit input - remove any potential script injection
+    const sanitizedPrompt = prompt
+      .slice(0, MAX_PROMPT_LENGTH)
+      .trim()
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/[<>]/g, '');   // Remove any remaining angle brackets
+    
     const sanitizedIconNames = iconNames
-      .filter((name): name is string => typeof name === 'string')
+      .filter((name): name is string => typeof name === 'string' && name.length < 100)
+      .map(name => name.replace(/<[^>]*>/g, '').replace(/[<>]/g, ''))
       .slice(0, MAX_ICON_NAMES);
 
-    if (!sanitizedPrompt) {
+    if (!sanitizedPrompt || sanitizedPrompt.length < 1) {
       return res.status(400).json({ error: 'Prompt cannot be empty' });
     }
 
@@ -266,10 +283,12 @@ Return JSON with categories.`
       reasoning: result.reasoning,
     });
   } catch (error) {
+    // Log full error server-side for debugging (never sent to client)
     console.error('AI Search error:', error);
+    
+    // Return generic error to client - don't expose internal details
     return res.status(500).json({
-      error: 'AI search failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      error: 'AI search temporarily unavailable. Please try again.',
     });
   }
 }
