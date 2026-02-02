@@ -94,83 +94,118 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     // Create the prompt for Claude
-    const systemPrompt = `You are an icon finder assistant. Your job is to find the most relevant icons from a given list based on a user's description.
+    const systemPrompt = `You are an icon finder assistant. Your job is to find the most relevant icons from a given list based on a user's input.
+
+IMPORTANT: The user might give you a single word (like "revenue", "AI", "home") OR a full description. Either way, THINK BROADLY about what icons could represent that concept.
 
 Rules:
 1. Return ONLY icon names that exist in the provided list (case-insensitive matching is fine)
-2. Return a maximum of 24 icons, ordered by relevance (most relevant first)
-3. Consider:
-   - Direct matches (e.g., "home" → Home icon)
-   - Conceptual matches (e.g., "AI" → Sparkle, Magic, Lightbulb, Brain)
-   - Metaphorical matches (e.g., "fast" → Rocket, Lightning, Zap)
-   - Common UI patterns (e.g., "save" → Floppy, Checkmark)
-   - Similar concepts (e.g., "email" → Mail, Envelope, Inbox)
-   - Business/Finance concepts (e.g., "revenue" → Money, Dollar, Chart, Graph, Trending Up, Analytics, Wallet, Coin, Currency, Cash, Payment, Bank, Growth, Pie Chart, Bar Chart, Line Chart, Statistics)
-4. Return your response as a valid JSON object with:
-   - "icons": array of icon names (strings)
-   - "reasoning": brief explanation of why you chose these icons (1-2 sentences)
+2. Return a maximum of 30 icons, ordered by relevance (most relevant first)
+3. THINK EXPANSIVELY about the user's query:
+   - For "revenue" → think: money, dollar, coin, chart, graph, trending, growth, analytics, wallet, bank, cash, statistics, pie, bar, line, finance, income, profit
+   - For "AI" → think: sparkle, magic, brain, robot, lightbulb, star, neural, chip, cpu, smart, auto, wand
+   - For "fast" → think: rocket, lightning, zap, bolt, flash, speed, timer, clock, arrow
+   - For "save" → think: disk, floppy, download, check, bookmark, heart, star
+   - For "user" → think: person, people, account, profile, avatar, team, group
+4. Even for single words, return AT LEAST 15-20 icons by exploring related concepts
+5. Return your response as a valid JSON object with:
+   - "icons": array of icon names (strings) - aim for 20-30 icons
+   - "reasoning": brief explanation (1-2 sentences)
 
-Example response for "revenue icon":
-{"icons": ["Money", "Dollar", "Chart Line", "Trending Up", "Wallet", "Coin", "Currency", "Cash", "Bank", "Analytics", "Graph", "Growth"], "reasoning": "Selected icons representing money, financial growth, and data visualization commonly used for revenue dashboards."}`;
+CRITICAL: Never return an empty icons array. Always find at least 10 related icons by thinking about synonyms, related concepts, and visual metaphors.`;
 
-    // Send more icon names to AI for better coverage (up to 2000)
-    const iconsToShow = sanitizedIconNames.slice(0, 2000);
-    const userMessage = `Available icons: ${iconsToShow.join(', ')}${sanitizedIconNames.length > 2000 ? `... (and ${sanitizedIconNames.length - 2000} more similar variations)` : ''}
+    // Send more icon names to AI for better coverage (up to 2500)
+    const iconsToShow = sanitizedIconNames.slice(0, 2500);
+    const userMessage = `Available icons: ${iconsToShow.join(', ')}${sanitizedIconNames.length > 2500 ? `... (and ${sanitizedIconNames.length - 2500} more similar variations)` : ''}
 
-User is looking for: "${sanitizedPrompt}"
+User's search query: "${sanitizedPrompt}"
 
-Find the most relevant icons. For financial/revenue queries, look for: Chart, Dollar, Money, Currency, Coin, Wallet, Bank, Cash, Payment, Credit Card, Growth, Trending, Analytics, Statistics, Graph, Pie Chart, Bar Chart, Finance, Budget.
+Find ALL relevant icons. Think broadly:
+- What does this concept look like visually?
+- What related concepts could also apply?
+- What metaphors or symbols represent this?
+- What UI patterns typically use this concept?
 
-Return as JSON.`;
+Return as JSON with at least 15-20 icons.`;
 
-    // Call Claude API
-    const message = await anthropic.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: userMessage,
-        },
-      ],
-      system: systemPrompt,
-    });
+    // Helper function to call Claude and get icons
+    async function getIconsFromAI(prompt: string, isRetry: boolean = false): Promise<AISearchResponse> {
+      const retryMessage = isRetry 
+        ? `The previous search returned few results. Now think MORE BROADLY and CREATIVELY about "${sanitizedPrompt}".
+What visual metaphors represent this? What related business/tech concepts apply?
+Find icons for synonyms, related ideas, and visual representations.
 
-    // Extract the text response
-    const textContent = message.content.find((block) => block.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text response from AI');
-    }
+Available icons: ${iconsToShow.join(', ')}
 
-    // Parse the JSON response
-    let result: AISearchResponse;
-    try {
-      // Extract JSON from the response (it might be wrapped in markdown code blocks)
+Return JSON with at least 20 icons.`
+        : prompt;
+
+      const message = await anthropic.messages.create({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: retryMessage,
+          },
+        ],
+        system: systemPrompt,
+      });
+
+      const textContent = message.content.find((block) => block.type === 'text');
+      if (!textContent || textContent.type !== 'text') {
+        throw new Error('No text response from AI');
+      }
+
       const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error('No JSON found in response');
       }
-      result = JSON.parse(jsonMatch[0]);
-    } catch (parseError) {
-      console.error('Failed to parse AI response:', textContent.text);
-      throw new Error('Failed to parse AI response');
+      return JSON.parse(jsonMatch[0]);
     }
 
-    // Validate and filter the results - use flexible matching
-    // AI might return "Chart" but we have "Chart Line", "Chart Bar", etc.
-    const validIcons = (result.icons || [])
-      .filter((icon: string) => {
-        const iconLower = icon.toLowerCase().trim();
-        return sanitizedIconNames.some((name) => {
-          const nameLower = name.toLowerCase();
-          // Exact match, starts with, or contains the term
-          return nameLower === iconLower || 
-                 nameLower.startsWith(iconLower + ' ') ||
-                 nameLower.includes(' ' + iconLower + ' ') ||
-                 nameLower.endsWith(' ' + iconLower);
-        });
-      })
-      .slice(0, 24);
+    // Helper function to validate and filter icons with flexible matching
+    function validateIcons(icons: string[]): string[] {
+      return (icons || [])
+        .filter((icon: string) => {
+          const iconLower = icon.toLowerCase().trim();
+          return sanitizedIconNames.some((name) => {
+            const nameLower = name.toLowerCase();
+            return nameLower === iconLower || 
+                   nameLower.startsWith(iconLower + ' ') ||
+                   nameLower.includes(' ' + iconLower + ' ') ||
+                   nameLower.endsWith(' ' + iconLower) ||
+                   iconLower.split(' ').some(word => 
+                     word.length > 2 && nameLower.includes(word)
+                   );
+          });
+        })
+        .slice(0, 30);
+    }
+
+    // First attempt
+    let result = await getIconsFromAI(userMessage);
+    let validIcons = validateIcons(result.icons);
+
+    // If too few results, retry with expanded prompt
+    if (validIcons.length < 8) {
+      console.log(`First attempt returned only ${validIcons.length} icons, retrying with expanded search...`);
+      try {
+        const retryResult = await getIconsFromAI(userMessage, true);
+        const retryValidIcons = validateIcons(retryResult.icons);
+        
+        // Merge results, keeping unique icons
+        const allIcons = [...new Set([...validIcons, ...retryValidIcons])];
+        validIcons = allIcons.slice(0, 30);
+        
+        if (retryResult.reasoning) {
+          result.reasoning = retryResult.reasoning;
+        }
+      } catch (retryError) {
+        console.error('Retry failed:', retryError);
+        // Continue with original results
+      }
+    }
 
     return res.status(200).json({
       icons: validIcons,
