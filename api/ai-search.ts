@@ -13,10 +13,49 @@ interface AISearchResponse {
   reasoning?: string;
 }
 
+// Simple in-memory rate limiting (resets on cold start)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_MAX = 20; // Max requests per window
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute window
+
+function getRateLimitKey(req: VercelRequest): string {
+  // Use forwarded IP or fallback
+  const forwarded = req.headers['x-forwarded-for'];
+  const ip = typeof forwarded === 'string' ? forwarded.split(',')[0] : 'unknown';
+  return ip;
+}
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(key);
+  
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return false;
+  }
+  
+  entry.count++;
+  return true;
+}
+
+// Input validation constants
+const MAX_PROMPT_LENGTH = 500;
+const MAX_ICON_NAMES = 1000;
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limiting
+  const rateLimitKey = getRateLimitKey(req);
+  if (!checkRateLimit(rateLimitKey)) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
   // Check for API key
@@ -30,8 +69,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body: AISearchRequest = req.body;
     const { prompt, iconNames } = body;
 
-    if (!prompt || !iconNames || !Array.isArray(iconNames)) {
-      return res.status(400).json({ error: 'Invalid request body' });
+    // Input validation
+    if (!prompt || typeof prompt !== 'string') {
+      return res.status(400).json({ error: 'Invalid prompt' });
+    }
+    
+    if (!iconNames || !Array.isArray(iconNames)) {
+      return res.status(400).json({ error: 'Invalid icon names' });
+    }
+
+    // Sanitize and limit input
+    const sanitizedPrompt = prompt.slice(0, MAX_PROMPT_LENGTH).trim();
+    const sanitizedIconNames = iconNames
+      .filter((name): name is string => typeof name === 'string')
+      .slice(0, MAX_ICON_NAMES);
+
+    if (!sanitizedPrompt) {
+      return res.status(400).json({ error: 'Prompt cannot be empty' });
     }
 
     // Initialize Anthropic client
@@ -58,9 +112,9 @@ Rules:
 Example response:
 {"icons": ["Sparkle", "Lightbulb", "Magic", "Brain", "Star", "Rocket"], "reasoning": "Selected icons that represent AI, innovation, and intelligence concepts."}`;
 
-    const userMessage = `Available icons: ${iconNames.slice(0, 500).join(', ')}${iconNames.length > 500 ? '... and more' : ''}
+    const userMessage = `Available icons: ${sanitizedIconNames.slice(0, 500).join(', ')}${sanitizedIconNames.length > 500 ? '... and more' : ''}
 
-User is looking for: "${prompt}"
+User is looking for: "${sanitizedPrompt}"
 
 Find the most relevant icons and return as JSON.`;
 
@@ -100,7 +154,7 @@ Find the most relevant icons and return as JSON.`;
     // Validate and filter the results to only include icons that exist in the provided list
     const validIcons = (result.icons || [])
       .filter((icon: string) =>
-        iconNames.some(
+        sanitizedIconNames.some(
           (name) => name.toLowerCase() === icon.toLowerCase()
         )
       )

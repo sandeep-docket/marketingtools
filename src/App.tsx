@@ -81,7 +81,8 @@ function LoginPage() {
 
 // Protected Route Component
 // TEMPORARY: Enable for testing new AI Search feature
-const BYPASS_AUTH_FOR_TESTING = true
+// SECURITY: Set to false for production - only enable for local testing
+const BYPASS_AUTH_FOR_TESTING = false
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
