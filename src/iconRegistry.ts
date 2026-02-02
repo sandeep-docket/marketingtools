@@ -221,221 +221,56 @@ const iconEnhancedTags: Record<string, string[]> = {
   'gift': ['present', 'reward', 'bonus', 'surprise', 'package'],
 };
 
-// Fluent Icons - Common icons with Filled and Regular (outline) variants
-// Names follow the pattern: IconNameFilled / IconNameRegular
-const fluentIconNames = [
-  // Navigation & Actions
-  'Home', 'Search', 'Settings', 'Add', 'Delete', 'Edit', 'Save', 'Share', 'Copy', 'Cut', 'Paste',
-  'Undo', 'Redo', 'Refresh', 'Sync', 'Filter', 'Sort', 'More', 'Menu', 'Close', 'Checkmark',
-  'ChevronLeft', 'ChevronRight', 'ChevronUp', 'ChevronDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-  'ArrowDownload', 'ArrowUpload', 'ArrowExportLtr', 'ArrowImport', 'ArrowReset', 'ArrowUndo', 'ArrowRedo',
-  
-  // Communication
-  'Mail', 'MailRead', 'MailUnread', 'Send', 'Chat', 'ChatMultiple', 'Comment', 'CommentMultiple',
-  'Call', 'CallEnd', 'Video', 'VideoOff', 'Mic', 'MicOff', 'Speaker', 'SpeakerOff',
-  'Notification', 'NotificationOff', 'Alert', 'AlertOn', 'AlertOff',
-  
-  // People & Accounts
-  'Person', 'PersonAdd', 'PersonDelete', 'People', 'PeopleTeam', 'PeopleAdd', 'Guest', 'Contact',
-  'PersonAccounts', 'PersonCircle', 'PersonFeedback',
-  
-  // Documents & Files
-  'Document', 'DocumentAdd', 'DocumentCopy', 'DocumentEdit', 'DocumentPdf', 'DocumentText',
-  'Folder', 'FolderAdd', 'FolderOpen', 'FolderZip', 'Archive', 'Attach', 'Link', 'LinkSquare',
-  'Image', 'ImageAdd', 'ImageEdit', 'ImageMultiple', 'ImageSearch',
-  
-  // Media
-  'Play', 'Pause', 'Stop', 'Record', 'PlayCircle', 'PauseCircle', 'Previous', 'Next',
-  'FastForward', 'Rewind', 'Repeat', 'Shuffle', 'VolumeOff', 'VolumeLow', 'VolumeMedium', 'VolumeHigh',
-  
-  // UI Elements
-  'Grid', 'List', 'Table', 'Calendar', 'CalendarAdd', 'CalendarToday', 'Clock', 'Timer', 'History',
-  'Star', 'StarAdd', 'StarOff', 'Heart', 'HeartBroken', 'Bookmark', 'BookmarkAdd', 'BookmarkOff',
-  'Flag', 'FlagOff', 'Pin', 'PinOff', 'Tag', 'TagMultiple',
-  
-  // Status & Feedback
-  'CheckmarkCircle', 'DismissCircle', 'ErrorCircle', 'Info', 'Question', 'QuestionCircle', 'Warning',
-  'ShieldCheckmark', 'ShieldDismiss', 'ShieldError', 'LockClosed', 'LockOpen', 'Key',
-  
-  // Data & Analytics
-  'DataArea', 'DataBarVertical', 'DataLine', 'DataPie', 'DataScatter', 'DataTreemap',
-  'ChartMultiple', 'Poll', 'Gauge', 'Pulse',
-  
-  // Devices & Hardware
-  'Desktop', 'Laptop', 'Phone', 'Tablet', 'Watch', 'Headphones', 'Camera', 'CameraAdd',
-  'Print', 'Keyboard', 'Mouse', 'Usb', 'Bluetooth', 'Wifi', 'WifiOff', 'Cellular',
-  
-  // Cloud & Server
-  'Cloud', 'CloudAdd', 'CloudArrowDown', 'CloudArrowUp', 'CloudOff', 'CloudSync', 'CloudCheckmark',
-  'Server', 'ServerMultiple', 'Database', 'Storage',
-  
-  // Development
-  'Code', 'CodeBlock', 'Terminal', 'Bug', 'Beaker', 'Wrench', 'WrenchScrewdriver', 'Toolbox',
-  'Puzzle', 'Extension', 'Api', 'Branch', 'BranchFork', 'Merge', 'GitRepository',
-  
-  // Business
-  'Building', 'BuildingMultiple', 'Money', 'Wallet', 'CreditCard', 'Receipt', 'Cart', 'CartAdd',
-  'ShoppingBag', 'Gift', 'Certificate', 'Trophy', 'Ribbon', 'Award',
-  
-  // Nature & Weather
-  'Weather', 'WeatherSunny', 'WeatherCloudy', 'WeatherRain', 'WeatherSnow', 'WeatherMoon',
-  'Leaf', 'Plant', 'Tree', 'Fire', 'Drop', 'Snowflake',
-  
-  // Shapes & Objects
-  'Circle', 'Square', 'Triangle', 'Pentagon', 'Hexagon', 'Star', 'Diamond',
-  'Cube', 'Sphere', 'Cone', 'Cylinder',
-  
-  // Accessibility
-  'Accessibility', 'Eye', 'EyeOff', 'EyeTracking', 'Glasses', 'Ear', 'Hand', 'Cursor',
-  
-  // Social
-  'ThumbLike', 'ThumbDislike', 'Emoji', 'EmojiAdd', 'EmojiHand', 'EmojiLaugh', 'EmojiSad', 'EmojiAngry',
-  'Sparkle', 'Lightbulb', 'LightbulbFilament', 'Rocket', 'Airplane', 'Vehicle', 'Map', 'Location',
-  
-  // Text & Formatting
-  'TextFont', 'TextBold', 'TextItalic', 'TextUnderline', 'TextStrikethrough', 'TextColor',
-  'TextAlignLeft', 'TextAlignCenter', 'TextAlignRight', 'TextAlignJustify',
-  'TextBulletList', 'TextNumberList', 'TextIndentIncrease', 'TextIndentDecrease',
-  
-  // Misc
-  'Globe', 'Earth', 'Translate', 'Battery', 'Power', 'FlashOn', 'FlashOff',
-  'QrCode', 'Barcode', 'Scan', 'Fingerprint', 'Shield', 'Safety',
-];
+// Dynamic icon name extraction from packages
+// We import all icons dynamically for the full library
 
-// Huge Icons - Common icons (stroke-rounded style in free version)
-const hugeIconNames = [
-  // Navigation
-  'Home01', 'Home02', 'Home03', 'Home04', 'Home05', 'Search01', 'Search02', 'SearchMinus', 'SearchPlus',
-  'Menu01', 'Menu02', 'Menu03', 'Menu04', 'Menu05', 'MoreHorizontal', 'MoreVertical',
-  'ArrowLeft01', 'ArrowLeft02', 'ArrowRight01', 'ArrowRight02', 'ArrowUp01', 'ArrowUp02', 'ArrowDown01', 'ArrowDown02',
-  'ArrowUpLeft01', 'ArrowUpRight01', 'ArrowDownLeft01', 'ArrowDownRight01',
-  'ChevronLeft', 'ChevronRight', 'ChevronUp', 'ChevronDown', 'ChevronDoubleLeft', 'ChevronDoubleRight',
-  
-  // Actions
-  'Add01', 'Add02', 'AddCircle', 'AddSquare', 'Remove01', 'Remove02', 'RemoveCircle', 'RemoveSquare',
-  'Delete01', 'Delete02', 'Delete03', 'Edit01', 'Edit02', 'Edit03', 'Edit04',
-  'Save01', 'Save02', 'Save03', 'Download01', 'Download02', 'Download03', 'Download04', 'Download05',
-  'Upload01', 'Upload02', 'Upload03', 'Upload04', 'Upload05', 'Share01', 'Share02', 'Share03',
-  'Copy01', 'Copy02', 'Paste01', 'Paste02', 'Cut01', 'Undo01', 'Undo02', 'Redo01', 'Redo02',
-  'Refresh', 'Reload', 'Sync01', 'Sync02',
-  
-  // Communication
-  'Mail01', 'Mail02', 'MailOpen01', 'MailOpen02', 'MailSend01', 'MailSend02', 'Inbox', 'Inbox01', 'Inbox02',
-  'Message01', 'Message02', 'MessageDots01', 'MessageDots02', 'MessageSquare01', 'MessageSquare02',
-  'Chat01', 'Chat02', 'Comment01', 'Comment02', 'Notification01', 'Notification02', 'Notification03',
-  'Bell01', 'Bell02', 'Bell03', 'BellOff', 'Call', 'CallIncoming01', 'CallOutgoing01', 'CallEnd01',
-  'Video01', 'Video02', 'VideoOff', 'Mic01', 'Mic02', 'MicOff01', 'MicOff02',
-  
-  // People
-  'User', 'User01', 'User02', 'User03', 'UserAdd01', 'UserAdd02', 'UserRemove01', 'UserRemove02',
-  'UserCircle', 'UserSquare', 'UserGroup', 'Users01', 'Users02', 'Team',
-  
-  // Documents
-  'File01', 'File02', 'FileAdd', 'FileAttachment', 'FileDoc', 'FilePdf', 'FileZip', 'FileAudio', 'FileVideo',
-  'Folder01', 'Folder02', 'FolderAdd', 'FolderOpen', 'FolderZip', 'FolderCloud',
-  'Document01', 'DocumentAttachment', 'DocumentCode', 'DocumentText',
-  'Attachment01', 'Attachment02', 'Link01', 'Link02', 'Link03', 'LinkCircle', 'LinkSquare01', 'LinkSquare02',
-  
-  // Images & Media
-  'Image01', 'Image02', 'Image03', 'ImageAdd01', 'ImageAdd02', 'Gallery', 'Album01', 'Album02',
-  'Camera01', 'Camera02', 'CameraOff', 'CameraVideo', 'Photo', 'Picture',
-  'Play', 'PlayCircle', 'PlaySquare', 'Pause', 'Stop', 'Record', 'Forward01', 'Backward01',
-  'Next', 'Previous', 'Playlist01', 'Playlist02', 'Music01', 'Music02', 'MusicNote01', 'MusicNote02',
-  'Volume01', 'Volume02', 'VolumeHigh', 'VolumeLow', 'VolumeMute', 'VolumeOff',
-  
-  // UI Elements
-  'Grid', 'GridOff', 'LayoutGrid', 'Layout01', 'Layout02', 'Layout03',
-  'List', 'ListUl', 'ListOl', 'Table01', 'Table02', 'Columns', 'Rows',
-  'Calendar01', 'Calendar02', 'Calendar03', 'CalendarAdd01', 'CalendarCheck01', 'CalendarRemove01',
-  'Clock01', 'Clock02', 'Clock03', 'Timer01', 'Timer02', 'Stopwatch', 'Alarm', 'Hourglass',
-  'Star', 'StarOff', 'StarHalf', 'Heart', 'HeartBroken', 'HeartOff',
-  'Bookmark01', 'Bookmark02', 'BookmarkAdd01', 'BookmarkAdd02', 'BookmarkOff01',
-  'Flag01', 'Flag02', 'Flag03', 'FlagOff', 'Pin01', 'Pin02', 'PinOff',
-  'Tag01', 'Tag02', 'Tags', 'Label',
-  
-  // Status
-  'CheckCircle', 'CheckSquare', 'Check', 'Tick01', 'Tick02', 'Close', 'Cancel01', 'Cancel02',
-  'Info01', 'Information', 'Question', 'Help', 'Alert01', 'Alert02', 'Warning',
-  'Error', 'Danger', 'Success', 'Verified',
-  
-  // Security
-  'Lock01', 'Lock02', 'LockOpen01', 'LockOpen02', 'Unlock', 'Key01', 'Key02',
-  'Shield01', 'Shield02', 'ShieldCheck', 'ShieldCross', 'ShieldPlus',
-  'Eye', 'EyeOff', 'View', 'ViewOff', 'Visible', 'Hidden',
-  
-  // Data & Charts
-  'Chart01', 'Chart02', 'ChartBar', 'ChartLine', 'ChartPie', 'ChartArea',
-  'Analytics01', 'Analytics02', 'Dashboard01', 'Dashboard02', 'Report',
-  'Database01', 'Database02', 'Server01', 'Server02', 'Cloud01', 'Cloud02', 'CloudUpload', 'CloudDownload',
-  
-  // Devices
-  'Computer', 'Desktop01', 'Desktop02', 'Laptop01', 'Laptop02', 'Phone01', 'Phone02', 'Mobile',
-  'Tablet01', 'Tablet02', 'Watch01', 'Watch02', 'Headphones01', 'Headphones02',
-  'Printer01', 'Printer02', 'Keyboard01', 'Mouse01', 'Monitor01', 'Monitor02', 'Tv01', 'Tv02',
-  
-  // Development
-  'Code', 'CodeCircle', 'CodeSquare', 'CodeFolder', 'Terminal', 'Command',
-  'Bug01', 'Bug02', 'Git', 'GitBranch', 'GitCommit', 'GitMerge', 'GitPull',
-  'Api', 'Puzzle', 'Plugin01', 'Plugin02', 'Module',
-  
-  // Business
-  'Building01', 'Building02', 'Building03', 'Building04', 'Building05', 'Office', 'Store01', 'Store02',
-  'Money01', 'Money02', 'Money03', 'Wallet01', 'Wallet02', 'CreditCard', 'Invoice01', 'Invoice02',
-  'Cart01', 'Cart02', 'ShoppingBag01', 'ShoppingBag02', 'ShoppingBasket',
-  'Gift', 'GiftCard', 'Coupon01', 'Coupon02', 'Ticket01', 'Ticket02',
-  'Award01', 'Award02', 'Trophy', 'Medal01', 'Medal02', 'Certificate01', 'Certificate02',
-  
-  // Travel & Location
-  'Map01', 'Map02', 'Location01', 'Location02', 'Location03', 'LocationOff', 'Pin', 'Marker',
-  'Globe01', 'Globe02', 'Earth', 'World', 'Compass01', 'Compass02',
-  'Airplane01', 'Airplane02', 'Car01', 'Car02', 'Truck01', 'Truck02', 'Bicycle',
-  
-  // Weather
-  'Sun01', 'Sun02', 'Sun03', 'Moon01', 'Moon02', 'MoonStar', 'Cloud', 'CloudSun', 'CloudRain',
-  'Rain01', 'Rain02', 'Snow', 'Wind01', 'Wind02', 'Fog', 'Rainbow', 'Umbrella',
-  
-  // Nature
-  'Leaf01', 'Leaf02', 'Leaf03', 'Tree01', 'Tree02', 'Flower', 'Plant01', 'Plant02',
-  'Fire01', 'Fire02', 'Water', 'Drop01', 'Drop02', 'Snowflake',
-  
-  // Shapes
-  'Circle', 'Square', 'Triangle', 'Pentagon', 'Hexagon', 'Octagon', 'Diamond',
-  'Cube01', 'Cube02', 'Sphere', 'Cylinder01', 'Cylinder02',
-  
-  // Emojis & Reactions
-  'Smile', 'SmilePlus', 'SadFace', 'AngryFace', 'NeutralFace', 'CoolFace', 'WinkFace',
-  'ThumbsUp', 'ThumbsDown', 'HandWave', 'HandPeace', 'HandPointing',
-  
-  // Misc
-  'Sparkles', 'Sparkle', 'Magic01', 'Magic02', 'Wand', 'Rocket01', 'Rocket02',
-  'Lightbulb01', 'Lightbulb02', 'Lightbulb03', 'Idea',
-  'Settings01', 'Settings02', 'Settings03', 'Gear', 'Cog', 'Tool01', 'Tool02', 'Wrench', 'Hammer',
-  'Zap', 'Flash', 'Lightning01', 'Lightning02', 'Battery01', 'Battery02', 'BatteryCharging',
-  'Power01', 'Power02', 'PowerOff',
-  'QrCode', 'Barcode', 'Scan01', 'Scan02', 'Fingerprint01', 'Fingerprint02',
-  'Translate', 'Language', 'TextAa', 'TextFont', 'Bold', 'Italic', 'Underline',
-];
+import * as FluentIcons from '@fluentui/react-icons';
+import * as HugeIconsPack from '@hugeicons/core-free-icons';
+
+// Extract all Fluent icon base names (removing Filled/Regular suffix)
+const fluentFilledNames = Object.keys(FluentIcons)
+  .filter(key => key.endsWith('Filled') && typeof (FluentIcons as Record<string, unknown>)[key] === 'function')
+  .map(key => key.replace(/Filled$/, ''));
+
+const fluentRegularNames = Object.keys(FluentIcons)
+  .filter(key => key.endsWith('Regular') && typeof (FluentIcons as Record<string, unknown>)[key] === 'function')
+  .map(key => key.replace(/Regular$/, ''));
+
+// Get unique base names that have both variants, plus those with only one variant
+const fluentIconNames = [...new Set([...fluentFilledNames, ...fluentRegularNames])];
+
+// Extract all Huge icon names (ending with Icon but not FreeIcons)
+const hugeIconNames = Object.keys(HugeIconsPack)
+  .filter(key => key.endsWith('Icon') && !key.includes('FreeIcons'))
+  .map(key => key.replace(/Icon$/, ''));
 
 // Generate Fluent icon entries for both filled and outline variants
 function generateFluentEntries(): IconEntry[] {
   const entries: IconEntry[] = [];
+  const fluentIconsObj = FluentIcons as Record<string, unknown>;
   
   for (const name of fluentIconNames) {
-    // Filled variant
-    entries.push({
-      name: `${name}Filled`,
-      displayName: name,
-      library: 'fluent-filled',
-      tags: generateTags(name),
-    });
+    // Check if Filled variant exists
+    const filledName = `${name}Filled`;
+    if (fluentIconsObj[filledName] && typeof fluentIconsObj[filledName] === 'function') {
+      entries.push({
+        name: filledName,
+        displayName: formatDisplayName(name),
+        library: 'fluent-filled',
+        tags: generateTags(name),
+      });
+    }
     
-    // Regular (outline) variant
-    entries.push({
-      name: `${name}Regular`,
-      displayName: name,
-      library: 'fluent-outline',
-      tags: generateTags(name),
-    });
+    // Check if Regular (outline) variant exists
+    const regularName = `${name}Regular`;
+    if (fluentIconsObj[regularName] && typeof fluentIconsObj[regularName] === 'function') {
+      entries.push({
+        name: regularName,
+        displayName: formatDisplayName(name),
+        library: 'fluent-outline',
+        tags: generateTags(name),
+      });
+    }
   }
   
   return entries;
@@ -443,12 +278,28 @@ function generateFluentEntries(): IconEntry[] {
 
 // Generate Huge Icons entries
 function generateHugeIconsEntries(): IconEntry[] {
-  return hugeIconNames.map(name => ({
-    name: `${name}Icon`,
-    displayName: name.replace(/(\d+)$/, ' $1').trim(),
-    library: 'hugeicons',
-    tags: generateTags(name),
-  }));
+  const hugeIconsObj = HugeIconsPack as Record<string, unknown>;
+  
+  return hugeIconNames
+    .filter(name => {
+      const iconName = `${name}Icon`;
+      return hugeIconsObj[iconName] !== undefined;
+    })
+    .map(name => ({
+      name: `${name}Icon`,
+      displayName: formatDisplayName(name),
+      library: 'hugeicons' as IconLibrary,
+      tags: generateTags(name),
+    }));
+}
+
+// Format display name from camelCase to readable format
+function formatDisplayName(name: string): string {
+  return name
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/(\d+)/g, ' $1')
+    .trim()
+    .replace(/\s+/g, ' ');
 }
 
 // Generate search tags from icon name with enhanced semantic tags

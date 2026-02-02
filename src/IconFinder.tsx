@@ -27,7 +27,7 @@ const COLOR_OPTIONS: ColorConfig[] = [
 ]
 
 // Items per page for pagination
-const ITEMS_PER_PAGE = 120
+const ITEMS_PER_PAGE = 200
 
 function IconFinder() {
   // State
