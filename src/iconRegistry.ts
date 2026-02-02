@@ -228,12 +228,13 @@ import * as FluentIcons from '@fluentui/react-icons';
 import * as HugeIconsPack from '@hugeicons/core-free-icons';
 
 // Extract all Fluent icon base names (removing Filled/Regular suffix)
+// Fluent icons are exported as React components (objects with $$typeof)
 const fluentFilledNames = Object.keys(FluentIcons)
-  .filter(key => key.endsWith('Filled') && typeof (FluentIcons as Record<string, unknown>)[key] === 'function')
+  .filter(key => key.endsWith('Filled') && (FluentIcons as Record<string, unknown>)[key] != null)
   .map(key => key.replace(/Filled$/, ''));
 
 const fluentRegularNames = Object.keys(FluentIcons)
-  .filter(key => key.endsWith('Regular') && typeof (FluentIcons as Record<string, unknown>)[key] === 'function')
+  .filter(key => key.endsWith('Regular') && (FluentIcons as Record<string, unknown>)[key] != null)
   .map(key => key.replace(/Regular$/, ''));
 
 // Get unique base names that have both variants, plus those with only one variant
@@ -252,7 +253,7 @@ function generateFluentEntries(): IconEntry[] {
   for (const name of fluentIconNames) {
     // Check if Filled variant exists
     const filledName = `${name}Filled`;
-    if (fluentIconsObj[filledName] && typeof fluentIconsObj[filledName] === 'function') {
+    if (fluentIconsObj[filledName] != null) {
       entries.push({
         name: filledName,
         displayName: formatDisplayName(name),
@@ -263,7 +264,7 @@ function generateFluentEntries(): IconEntry[] {
     
     // Check if Regular (outline) variant exists
     const regularName = `${name}Regular`;
-    if (fluentIconsObj[regularName] && typeof fluentIconsObj[regularName] === 'function') {
+    if (fluentIconsObj[regularName] != null) {
       entries.push({
         name: regularName,
         displayName: formatDisplayName(name),
