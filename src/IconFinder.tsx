@@ -399,6 +399,13 @@ function IconFinder() {
     setAIResultsPrompt('')
   }, [])
 
+  // Open AI search modal with clean state
+  const openAISearch = useCallback(() => {
+    setAIPrompt('')  // Clear previous prompt
+    setAIError(null) // Clear previous error
+    setShowAISearch(true)
+  }, [])
+
   // Generate mask URL from icon SVG for gradient display
   useEffect(() => {
     if (!selectedIcon || !iconMaskRef.current) {
@@ -511,7 +518,7 @@ function IconFinder() {
         <div className="ai-search-section">
           <button
             className="ai-search-button"
-            onClick={() => setShowAISearch(true)}
+            onClick={openAISearch}
             type="button"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -458,18 +458,45 @@ export function getRelatedIcons(icon: IconEntry, limit: number = 8): IconEntry[]
   return scoredIcons.slice(0, limit).map(item => item.icon);
 }
 
-// Get all icon display names for AI search
+// Get simplified icon names for AI search (without size suffixes)
 export function getAllIconDisplayNames(): string[] {
-  return [...new Set(iconRegistry.map(icon => icon.displayName))];
+  // Return unique base names without size numbers (e.g., "Home" instead of "Home 20")
+  const baseNames = iconRegistry.map(icon => {
+    // Remove size numbers like "12", "16", "20", "24", "28", "32", "48"
+    // and version suffixes, keeping just the base concept
+    return icon.displayName
+      .replace(/\s+\d+\s*/g, ' ')  // Remove size numbers
+      .replace(/\s+V\d+$/i, '')     // Remove V2, V3 suffixes
+      .replace(/\s+/g, ' ')         // Clean up multiple spaces
+      .trim();
+  });
+  return [...new Set(baseNames)];
 }
 
 // Find icons by display names (for AI search results)
+// Uses flexible matching - finds icons whose base name matches
 export function findIconsByDisplayNames(displayNames: string[], libraries: IconLibrary[]): IconEntry[] {
-  const nameSet = new Set(displayNames.map(n => n.toLowerCase()));
-  return iconRegistry.filter(icon => 
-    libraries.includes(icon.library) && 
-    nameSet.has(icon.displayName.toLowerCase())
-  );
+  const searchTerms = displayNames.map(n => n.toLowerCase().trim());
+  
+  return iconRegistry.filter(icon => {
+    if (!libraries.includes(icon.library)) return false;
+    
+    const displayNameLower = icon.displayName.toLowerCase();
+    // Extract base name without size/version suffixes for comparison
+    const baseName = displayNameLower
+      .replace(/\s+\d+\s*/g, ' ')
+      .replace(/\s+v\d+$/i, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    // Check if any search term matches the base name
+    return searchTerms.some(term => 
+      baseName === term || 
+      baseName.startsWith(term + ' ') ||
+      baseName.includes(' ' + term + ' ') ||
+      baseName.endsWith(' ' + term)
+    );
+  });
 }
 
 // Export icon name lists for dynamic imports
