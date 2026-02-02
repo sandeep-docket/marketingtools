@@ -7,6 +7,8 @@ import MetaImageGenerator from './MetaImageGenerator'
 import IconFinder from './IconFinder'
 import LightRays from './LightRays'
 import BlurText from './BlurText'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { LayoutGrid, Image, Share, Search } from '@hugeicons/core-free-icons'
 import './App.css'
 
 // Docket Logo Component
@@ -201,14 +203,8 @@ function LandingPage() {
         <div className="tools-grid tools-grid-animated">
           {/* Blog Banner Generator - Active */}
           <Link to="/blog-banner" className="tool-card">
-            <div className="tool-icon">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <path d="M8 21h8"/>
-                <path d="M12 17v4"/>
-                <path d="M6 8h4"/>
-                <path d="M6 11h8"/>
-              </svg>
+            <div className="tool-icon tool-icon-white">
+              <HugeiconsIcon icon={LayoutGrid} size={48} color="#FFFFFF" />
             </div>
             <h3>Blog Banner Generator</h3>
             <p>Create beautiful blog banners with custom text and backgrounds</p>
@@ -217,12 +213,8 @@ function LandingPage() {
           
           {/* Product Photo Mockup - Active */}
           <Link to="/product-mockup" className="tool-card">
-            <div className="tool-icon">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <path d="M21 15l-5-5L5 21"/>
-              </svg>
+            <div className="tool-icon tool-icon-white">
+              <HugeiconsIcon icon={Image} size={48} color="#FFFFFF" />
             </div>
             <h3>Product Photo Mockup</h3>
             <p>Create stunning product mockups with beautiful backgrounds</p>
@@ -231,30 +223,22 @@ function LandingPage() {
           
           {/* Meta Image Generator - Active */}
           <Link to="/meta-image" className="tool-card">
-            <div className="tool-icon">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="2" y="2" width="20" height="20" rx="2"/>
-                <path d="M8 2v4M16 2v4M3 10h18M4 4h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
-                <circle cx="12" cy="15" r="2"/>
-              </svg>
+            <div className="tool-icon tool-icon-white">
+              <HugeiconsIcon icon={Share} size={48} color="#FFFFFF" />
             </div>
             <h3>Meta Image Generator</h3>
             <p>Generate optimized meta images for social media and SEO</p>
             <span className="tool-status active">Available</span>
           </Link>
           
-          {/* Icon Finder - Active */}
+          {/* Icon Finder - New Release */}
           <Link to="/icon-finder" className="tool-card">
-            <div className="tool-icon">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="M21 21l-4.35-4.35"/>
-                <path d="M8 8h6M8 11h4M8 14h2"/>
-              </svg>
+            <div className="tool-icon tool-icon-white">
+              <HugeiconsIcon icon={Search} size={48} color="#FFFFFF" />
             </div>
             <h3>Icon Finder</h3>
             <p>Search and download icons from Fluent and Huge Icons libraries</p>
-            <span className="tool-status active">Available</span>
+            <span className="tool-status new-release">New Release</span>
           </Link>
         </div>
       </div>

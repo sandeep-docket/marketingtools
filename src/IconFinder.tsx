@@ -82,6 +82,12 @@ function IconFinder() {
     return searchIcons(debouncedQuery, activeLibraries)
   }, [debouncedQuery, activeLibraries])
 
+  // Filter AI results based on enabled libraries (for dynamic updates)
+  const filteredAIResults = useMemo(() => {
+    if (!aiResults.length) return []
+    return aiResults.filter(icon => activeLibraries.includes(icon.library))
+  }, [aiResults, activeLibraries])
+
   // Paginated icons
   const paginatedIcons = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE
@@ -551,7 +557,7 @@ function IconFinder() {
                     </svg>
                     AI Results
                   </h2>
-                  <span className="ai-results-count">{aiResults.length} icons found</span>
+                  <span className="ai-results-count">{filteredAIResults.length} icons found</span>
                 </div>
               </div>
             </div>
@@ -562,8 +568,8 @@ function IconFinder() {
             </div>
 
             <div className="icons-grid">
-              {aiResults.length > 0 ? (
-                aiResults.map((icon) => (
+              {filteredAIResults.length > 0 ? (
+                filteredAIResults.map((icon) => (
                   <button
                     key={`${icon.library}-${icon.name}`}
                     className="icon-card ai-suggested"

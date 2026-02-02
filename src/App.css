@@ -281,8 +281,16 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+.tool-icon.tool-icon-white {
+  background: transparent;
+}
+
 .tool-card:not(.coming-soon):hover .tool-icon {
   background: linear-gradient(135deg, rgba(82, 114, 250, 0.25) 0%, rgba(255, 93, 77, 0.25) 100%);
+}
+
+.tool-card:not(.coming-soon):hover .tool-icon.tool-icon-white {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .tool-card h3 {
@@ -318,6 +326,11 @@
 .tool-status.active {
   background: rgba(82, 114, 250, 0.15);
   color: #5272FA;
+}
+
+.tool-status.new-release {
+  background: rgba(255, 93, 77, 0.15);
+  color: #FF5D4D;
 }
 
 /* Responsive */
