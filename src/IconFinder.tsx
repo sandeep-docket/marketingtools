@@ -57,6 +57,7 @@ function IconFinder() {
   const [aiPrompt, setAIPrompt] = useState('')
   const [isAISearching, setIsAISearching] = useState(false)
   const [aiResults, setAIResults] = useState<IconEntry[]>([])
+  const [aiCategories, setAICategories] = useState<{ category: string; icons: IconEntry[] }[]>([])
   const [aiResultsPrompt, setAIResultsPrompt] = useState('')
   const [showAIResults, setShowAIResults] = useState(false)
   const [aiError, setAIError] = useState<string | null>(null)
@@ -87,6 +88,17 @@ function IconFinder() {
     if (!aiResults.length) return []
     return aiResults.filter(icon => activeLibraries.includes(icon.library))
   }, [aiResults, activeLibraries])
+
+  // Filter AI categories based on enabled libraries
+  const filteredAICategories = useMemo(() => {
+    if (!aiCategories.length) return []
+    return aiCategories
+      .map(cat => ({
+        category: cat.category,
+        icons: cat.icons.filter(icon => activeLibraries.includes(icon.library))
+      }))
+      .filter(cat => cat.icons.length > 0)
+  }, [aiCategories, activeLibraries])
 
   // Paginated icons
   const paginatedIcons = useMemo(() => {
@@ -377,10 +389,22 @@ function IconFinder() {
       
       const data = await response.json()
       
-      // Find the icons from the results
-      const matchedIcons = findIconsByDisplayNames(data.icons || [], activeLibraries)
+      // Process categorized results
+      if (data.categories && Array.isArray(data.categories)) {
+        const categoriesWithIcons = data.categories.map((cat: { category: string; icons: string[] }) => ({
+          category: cat.category,
+          icons: findIconsByDisplayNames(cat.icons || [], activeLibraries)
+        })).filter((cat: { category: string; icons: IconEntry[] }) => cat.icons.length > 0)
+        
+        setAICategories(categoriesWithIcons)
+      } else {
+        setAICategories([])
+      }
       
+      // Also set flat results for backwards compatibility
+      const matchedIcons = findIconsByDisplayNames(data.icons || [], activeLibraries)
       setAIResults(matchedIcons)
+      
       setAIResultsPrompt(aiPrompt.trim())
       setShowAIResults(true)
       setShowAISearch(false)
@@ -396,6 +420,7 @@ function IconFinder() {
   const closeAIResults = useCallback(() => {
     setShowAIResults(false)
     setAIResults([])
+    setAICategories([])
     setAIResultsPrompt('')
   }, [])
 
@@ -574,9 +599,43 @@ function IconFinder() {
               <p className="prompt-text">"{aiResultsPrompt}"</p>
             </div>
 
-            <div className="icons-grid">
-              {filteredAIResults.length > 0 ? (
-                filteredAIResults.map((icon) => (
+            {/* Categorized AI Results */}
+            {filteredAICategories.length > 0 ? (
+              <div className="ai-categories">
+                {filteredAICategories.map((cat, catIndex) => (
+                  <div key={cat.category} className="ai-category-section">
+                    <div className="ai-category-header">
+                      <span className="ai-category-icon">
+                        {catIndex === 0 ? '🎯' : catIndex === 1 ? '📊' : catIndex === 2 ? '🔗' : catIndex === 3 ? '💡' : '✨'}
+                      </span>
+                      <h3 className="ai-category-title">{cat.category}</h3>
+                      <span className="ai-category-count">{cat.icons.length} icons</span>
+                    </div>
+                    <div className="ai-category-icons">
+                      {cat.icons.map((icon) => (
+                        <button
+                          key={`${icon.library}-${icon.name}`}
+                          className="icon-card ai-suggested"
+                          onClick={() => setSelectedIcon(icon)}
+                          title={icon.displayName}
+                        >
+                          <div className="icon-preview">
+                            {renderIcon(icon, 28)}
+                          </div>
+                          <span className="icon-name">{icon.displayName}</span>
+                          <span className={`icon-library library-${icon.library}`}>
+                            {icon.library === 'hugeicons' ? 'V1' : icon.library === 'fluent-filled' ? 'V2' : 'V3'}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredAIResults.length > 0 ? (
+              /* Fallback to flat grid if no categories */
+              <div className="icons-grid">
+                {filteredAIResults.map((icon) => (
                   <button
                     key={`${icon.library}-${icon.name}`}
                     className="icon-card ai-suggested"
@@ -592,17 +651,17 @@ function IconFinder() {
                       {icon.library === 'hugeicons' ? 'V1' : icon.library === 'fluent-filled' ? 'V2' : 'V3'}
                     </span>
                   </button>
-                ))
-              ) : (
-                <div className="no-results">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/>
-                  </svg>
-                  <p>No matching icons found</p>
-                  <span>Try describing what you need differently</span>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-results">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/>
+                </svg>
+                <p>No matching icons found</p>
+                <span>Try describing what you need differently</span>
+              </div>
+            )}
           </>
         ) : (
           /* Normal Search View */
