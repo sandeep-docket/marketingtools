@@ -44,7 +44,7 @@ function checkRateLimit(key: string): boolean {
 
 // Input validation constants
 const MAX_PROMPT_LENGTH = 500;
-const MAX_ICON_NAMES = 1000;
+const MAX_ICON_NAMES = 3000; // Allow more icon names for better AI coverage
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow POST requests
@@ -105,18 +105,23 @@ Rules:
    - Metaphorical matches (e.g., "fast" → Rocket, Lightning, Zap)
    - Common UI patterns (e.g., "save" → Floppy, Checkmark)
    - Similar concepts (e.g., "email" → Mail, Envelope, Inbox)
+   - Business/Finance concepts (e.g., "revenue" → Money, Dollar, Chart, Graph, Trending Up, Analytics, Wallet, Coin, Currency, Cash, Payment, Bank, Growth, Pie Chart, Bar Chart, Line Chart, Statistics)
 4. Return your response as a valid JSON object with:
    - "icons": array of icon names (strings)
    - "reasoning": brief explanation of why you chose these icons (1-2 sentences)
 
-Example response:
-{"icons": ["Sparkle", "Lightbulb", "Magic", "Brain", "Star", "Rocket"], "reasoning": "Selected icons that represent AI, innovation, and intelligence concepts."}`;
+Example response for "revenue icon":
+{"icons": ["Money", "Dollar", "Chart Line", "Trending Up", "Wallet", "Coin", "Currency", "Cash", "Bank", "Analytics", "Graph", "Growth"], "reasoning": "Selected icons representing money, financial growth, and data visualization commonly used for revenue dashboards."}`;
 
-    const userMessage = `Available icons: ${sanitizedIconNames.slice(0, 500).join(', ')}${sanitizedIconNames.length > 500 ? '... and more' : ''}
+    // Send more icon names to AI for better coverage (up to 2000)
+    const iconsToShow = sanitizedIconNames.slice(0, 2000);
+    const userMessage = `Available icons: ${iconsToShow.join(', ')}${sanitizedIconNames.length > 2000 ? `... (and ${sanitizedIconNames.length - 2000} more similar variations)` : ''}
 
 User is looking for: "${sanitizedPrompt}"
 
-Find the most relevant icons and return as JSON.`;
+Find the most relevant icons. For financial/revenue queries, look for: Chart, Dollar, Money, Currency, Coin, Wallet, Bank, Cash, Payment, Credit Card, Growth, Trending, Analytics, Statistics, Graph, Pie Chart, Bar Chart, Finance, Budget.
+
+Return as JSON.`;
 
     // Call Claude API
     const message = await anthropic.messages.create({
@@ -151,13 +156,20 @@ Find the most relevant icons and return as JSON.`;
       throw new Error('Failed to parse AI response');
     }
 
-    // Validate and filter the results to only include icons that exist in the provided list
+    // Validate and filter the results - use flexible matching
+    // AI might return "Chart" but we have "Chart Line", "Chart Bar", etc.
     const validIcons = (result.icons || [])
-      .filter((icon: string) =>
-        sanitizedIconNames.some(
-          (name) => name.toLowerCase() === icon.toLowerCase()
-        )
-      )
+      .filter((icon: string) => {
+        const iconLower = icon.toLowerCase().trim();
+        return sanitizedIconNames.some((name) => {
+          const nameLower = name.toLowerCase();
+          // Exact match, starts with, or contains the term
+          return nameLower === iconLower || 
+                 nameLower.startsWith(iconLower + ' ') ||
+                 nameLower.includes(' ' + iconLower + ' ') ||
+                 nameLower.endsWith(' ' + iconLower);
+        });
+      })
       .slice(0, 24);
 
     return res.status(200).json({
