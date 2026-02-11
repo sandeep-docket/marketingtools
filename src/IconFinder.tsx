@@ -191,12 +191,46 @@ function IconFinder() {
       clone.setAttribute('height', String(size))
       clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
       
-      // Apply color to all paths
+      // Detect if this is a stroke-based icon (e.g. Huge Icons have fill="none" on root SVG)
+      const svgRootFill = clone.getAttribute('fill')
+      const isStrokeBasedIcon = svgRootFill === 'none'
       const fillColor = colorConfig?.type === 'solid' ? colorConfig.value : '#000000'
-      clone.querySelectorAll('path, circle, rect, polygon, line, polyline').forEach(el => {
-        el.setAttribute('fill', fillColor || '#000000')
-        el.removeAttribute('stroke')
+      
+      // Apply color respecting the icon's rendering mode
+      clone.querySelectorAll('path, circle, rect, polygon, line, polyline, ellipse').forEach(el => {
+        const currentFill = el.getAttribute('fill')
+        const currentStroke = el.getAttribute('stroke')
+        
+        if (isStrokeBasedIcon) {
+          // Stroke-based icon: apply color to stroke, preserve fill="none"
+          if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+            el.setAttribute('stroke', fillColor || '#000000')
+          }
+          if (currentStroke === 'currentColor') {
+            el.setAttribute('stroke', fillColor || '#000000')
+          }
+          // Don't touch fill - keep it as-is (usually "none")
+        } else {
+          // Fill-based icon: apply color to fill, clean up stroke
+          if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
+            el.setAttribute('fill', fillColor || '#000000')
+          }
+          if (currentFill === 'currentColor') {
+            el.setAttribute('fill', fillColor || '#000000')
+          }
+          // Remove stroke for clean fill-based export
+          if (currentStroke) {
+            el.removeAttribute('stroke')
+          }
+        }
       })
+      
+      // Update root SVG attributes
+      if (isStrokeBasedIcon) {
+        if (clone.getAttribute('stroke')) {
+          clone.setAttribute('stroke', fillColor || '#000000')
+        }
+      }
       
       // Convert SVG to data URL
       const svgString = new XMLSerializer().serializeToString(clone)
@@ -284,6 +318,10 @@ function IconFinder() {
       clone.setAttribute('height', String(size))
       clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
       
+      // Detect if this is a stroke-based icon (e.g. Huge Icons have fill="none" on root SVG)
+      const svgRootFill = clone.getAttribute('fill')
+      const isStrokeBasedIcon = svgRootFill === 'none'
+      
       // For gradients, add gradient definition
       if (colorConfig?.type === 'gradient') {
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
@@ -307,15 +345,66 @@ function IconFinder() {
         defs.appendChild(gradient)
         clone.insertBefore(defs, clone.firstChild)
         
-        // Apply gradient to paths
-        clone.querySelectorAll('path, circle, rect, polygon, line, polyline').forEach(el => {
-          el.setAttribute('fill', 'url(#icon-gradient)')
+        // Apply gradient to paths respecting icon rendering mode
+        clone.querySelectorAll('path, circle, rect, polygon, line, polyline, ellipse').forEach(el => {
+          const currentFill = el.getAttribute('fill')
+          const currentStroke = el.getAttribute('stroke')
+          
+          if (isStrokeBasedIcon) {
+            // Stroke-based: apply gradient to stroke only
+            if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+              el.setAttribute('stroke', 'url(#icon-gradient)')
+            }
+            if (currentStroke === 'currentColor') {
+              el.setAttribute('stroke', 'url(#icon-gradient)')
+            }
+          } else {
+            // Fill-based: apply gradient to fill
+            if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
+              el.setAttribute('fill', 'url(#icon-gradient)')
+            }
+            if (currentFill === 'currentColor') {
+              el.setAttribute('fill', 'url(#icon-gradient)')
+            }
+            if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+              el.setAttribute('stroke', 'url(#icon-gradient)')
+            }
+          }
         })
+        
+        // Update root SVG attributes for stroke-based icons
+        if (isStrokeBasedIcon && clone.getAttribute('stroke')) {
+          clone.setAttribute('stroke', 'url(#icon-gradient)')
+        }
       } else if (colorConfig?.type === 'solid') {
-        // Update colors for solid
-        clone.querySelectorAll('path, circle, rect, polygon, line, polyline').forEach(el => {
-          el.setAttribute('fill', colorConfig.value || 'currentColor')
+        // Update colors for solid respecting icon rendering mode
+        clone.querySelectorAll('path, circle, rect, polygon, line, polyline, ellipse').forEach(el => {
+          const currentFill = el.getAttribute('fill')
+          const currentStroke = el.getAttribute('stroke')
+          
+          if (isStrokeBasedIcon) {
+            // Stroke-based: apply color to stroke only
+            if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+              el.setAttribute('stroke', colorConfig.value || 'currentColor')
+            }
+            if (currentStroke === 'currentColor') {
+              el.setAttribute('stroke', colorConfig.value || 'currentColor')
+            }
+          } else {
+            // Fill-based: apply color to fill
+            if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
+              el.setAttribute('fill', colorConfig.value || 'currentColor')
+            }
+            if (currentFill === 'currentColor') {
+              el.setAttribute('fill', colorConfig.value || 'currentColor')
+            }
+          }
         })
+        
+        // Update root SVG attributes for stroke-based icons
+        if (isStrokeBasedIcon && clone.getAttribute('stroke')) {
+          clone.setAttribute('stroke', colorConfig.value || 'currentColor')
+        }
       }
       
       const svgContent = new XMLSerializer().serializeToString(clone)
@@ -578,6 +667,23 @@ function IconFinder() {
           <h1>Icon Finder</h1>
         </div>
 
+        {/* AI Search Button */}
+        <div className="ai-search-section">
+          <button
+            className="ai-search-button"
+            onClick={openAISearch}
+            type="button"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/>
+              <path d="M5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z"/>
+              <path d="M18 14l.75 2.25L21 17l-2.25.75L18 20l-.75-2.25L15 17l2.25-.75L18 14z"/>
+            </svg>
+            <span>AI Search</span>
+            <span className="ai-badge">Beta</span>
+          </button>
+        </div>
+
         {/* Search Input */}
         <div className="search-section">
           <label htmlFor="iconSearch">Search Icons</label>
@@ -640,23 +746,6 @@ function IconFinder() {
               <span className="toggle-sublabel">Fluent Outline</span>
             </button>
           </div>
-        </div>
-
-        {/* AI Search Button */}
-        <div className="ai-search-section">
-          <button
-            className="ai-search-button"
-            onClick={openAISearch}
-            type="button"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/>
-              <path d="M5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z"/>
-              <path d="M18 14l.75 2.25L21 17l-2.25.75L18 20l-.75-2.25L15 17l2.25-.75L18 14z"/>
-            </svg>
-            <span>AI Search</span>
-            <span className="ai-badge">Beta</span>
-          </button>
         </div>
 
         {/* Results Count */}
@@ -1089,6 +1178,14 @@ function IconFinder() {
                 id="aiPrompt"
                 value={aiPrompt}
                 onChange={(e) => setAIPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    if (aiPrompt.trim() && !isAISearching) {
+                      handleAISearch()
+                    }
+                  }
+                }}
                 placeholder="e.g., An icon that represents artificial intelligence and automation for a dashboard..."
                 rows={4}
                 disabled={isAISearching}
