@@ -5,10 +5,11 @@ import BannerGenerator from './BannerGenerator'
 import ProductPhotoMockup from './ProductPhotoMockup'
 import MetaImageGenerator from './MetaImageGenerator'
 import IconFinder from './IconFinder'
+import PodcastImageMaker from './PodcastImageMaker'
 import LightRays from './LightRays'
 import BlurText from './BlurText'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { LayoutGrid, Image, Share, Search } from '@hugeicons/core-free-icons'
+import { LayoutGrid, Image, Share, Search, Podcast } from '@hugeicons/core-free-icons'
 import './App.css'
 
 // Docket Logo Component
@@ -240,6 +241,16 @@ function LandingPage() {
             <p>Search and download icons from Fluent and Huge Icons libraries</p>
             <span className="tool-status new-release">New Release</span>
           </Link>
+
+          {/* Podcast Image Maker - New */}
+          <Link to="/podcast-image" className="tool-card">
+            <div className="tool-icon tool-icon-white">
+              <HugeiconsIcon icon={Podcast} size={48} color="#FFFFFF" />
+            </div>
+            <h3>Podcast Image Maker</h3>
+            <p>Create professional podcast episode graphics with dual-size export</p>
+            <span className="tool-status new-release">New Release</span>
+          </Link>
         </div>
       </div>
     </div>
@@ -289,6 +300,8 @@ function PageTitle() {
       document.title = 'Meta Image Generator - Docket Marketing Tools'
     } else if (path === '/icon-finder') {
       document.title = 'Icon Finder - Docket Marketing Tools'
+    } else if (path === '/podcast-image') {
+      document.title = 'Podcast Image Maker - Docket Marketing Tools'
     } else if (path === '/login') {
       document.title = 'Sign In - Docket Marketing Tools'
     } else {
@@ -340,6 +353,11 @@ function AppRoutes() {
         <Route path="/icon-finder" element={
           <ProtectedRoute>
             <IconFinder />
+          </ProtectedRoute>
+        } />
+        <Route path="/podcast-image" element={
+          <ProtectedRoute>
+            <PodcastImageMaker />
           </ProtectedRoute>
         } />
         <Route path="*" element={
