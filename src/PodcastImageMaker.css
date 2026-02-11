@@ -869,11 +869,12 @@
   margin-left: -230px;
 }
 
-.podcast-person-image-wrapper img {
+.podcast-person-image-bg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
   pointer-events: none;
 }
 

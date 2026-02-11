@@ -292,6 +292,66 @@ function PodcastImageMaker() {
     }
   }, [dragTarget, canvasScale])
 
+  // ---- Inline all images as data URLs so html-to-image doesn't need to fetch ----
+  const inlineImages = async (root: HTMLElement) => {
+    const originals: { el: HTMLElement; prop: string; value: string }[] = []
+
+    // Helper: fetch a URL and return a data URL
+    const toDataUrl = async (url: string): Promise<string | null> => {
+      try {
+        const resp = await fetch(url)
+        const blob = await resp.blob()
+        return new Promise(resolve => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(blob)
+        })
+      } catch { return null }
+    }
+
+    // Inline background-image on all elements
+    const allEls = root.querySelectorAll('*')
+    for (const el of allEls) {
+      const cs = getComputedStyle(el)
+      const bg = cs.backgroundImage
+      if (bg && bg !== 'none') {
+        const urlMatch = bg.match(/url\(["']?(.*?)["']?\)/)
+        if (urlMatch && urlMatch[1] && !urlMatch[1].startsWith('data:')) {
+          const dataUrl = await toDataUrl(urlMatch[1])
+          if (dataUrl) {
+            const htmlEl = el as HTMLElement
+            originals.push({ el: htmlEl, prop: 'backgroundImage', value: htmlEl.style.backgroundImage })
+            htmlEl.style.backgroundImage = `url(${dataUrl})`
+          }
+        }
+      }
+    }
+
+    // Inline <img> src attributes
+    const imgs = root.querySelectorAll('img')
+    for (const img of imgs) {
+      if (img.src && !img.src.startsWith('data:')) {
+        const dataUrl = await toDataUrl(img.src)
+        if (dataUrl) {
+          originals.push({ el: img, prop: 'src', value: img.src })
+          img.src = dataUrl
+        }
+      }
+    }
+
+    return originals
+  }
+
+  const restoreInlined = (originals: { el: HTMLElement; prop: string; value: string }[]) => {
+    for (const { el, prop, value } of originals) {
+      if (prop === 'src') {
+        (el as HTMLImageElement).src = value
+      } else if (prop === 'backgroundImage') {
+        el.style.backgroundImage = value
+      }
+    }
+  }
+
   // ---- Download ----
   const doExport = useCallback(async (mode: 'wide' | 'square'): Promise<Blob | null> => {
     const targetRef = canvasRef.current
@@ -310,53 +370,49 @@ function PodcastImageMaker() {
       scaleContainer.style.transform = 'none'
     }
 
-    // Remove overflow:hidden from all ancestors so the full-size canvas isn't clipped
-    const ancestors: { el: HTMLElement; original: string }[] = []
+    // Remove overflow clipping from all ancestors
+    const savedOverflow: { el: HTMLElement; ov: string; ovx: string; ovy: string }[] = []
     let parent = targetRef.parentElement
     while (parent && parent !== document.body) {
-      const computed = getComputedStyle(parent)
-      if (computed.overflow !== 'visible') {
-        ancestors.push({ el: parent, original: parent.style.overflow })
+      const cs = getComputedStyle(parent)
+      if (cs.overflow !== 'visible' || cs.overflowX !== 'visible' || cs.overflowY !== 'visible') {
+        savedOverflow.push({ el: parent, ov: parent.style.overflow, ovx: parent.style.overflowX, ovy: parent.style.overflowY })
         parent.style.overflow = 'visible'
-      }
-      if (computed.overflowX !== 'visible') {
         parent.style.overflowX = 'visible'
-      }
-      if (computed.overflowY !== 'visible') {
         parent.style.overflowY = 'visible'
       }
       parent = parent.parentElement
     }
 
+    // Inline all images as data URLs so the export doesn't need to refetch
+    const inlinedImages = await inlineImages(targetRef)
+
     try {
-      // Wait for layout to settle
-      await new Promise(resolve => setTimeout(resolve, 300))
+      await new Promise(resolve => setTimeout(resolve, 200))
 
       const dataUrl = await toPng(targetRef, {
         width: targetW,
         height: targetH,
         pixelRatio: 1,
-        cacheBust: true,
-        includeQueryParams: true,
       })
 
       // Convert data URL to Blob
-      const res = await fetch(dataUrl)
-      const blob = await res.blob()
-      return blob
+      const resp = await fetch(dataUrl)
+      return await resp.blob()
     } catch (err) {
       console.error('Export error:', err)
       return null
     } finally {
       // Restore everything
+      restoreInlined(inlinedImages)
       targetRef.classList.remove('exporting')
       if (scaleContainer) {
         scaleContainer.style.transform = originalTransform
       }
-      for (const { el, original } of ancestors) {
-        el.style.overflow = original
-        el.style.overflowX = ''
-        el.style.overflowY = ''
+      for (const { el, ov, ovx, ovy } of savedOverflow) {
+        el.style.overflow = ov
+        el.style.overflowX = ovx
+        el.style.overflowY = ovy
       }
     }
   }, [])
@@ -624,10 +680,9 @@ function PodcastImageMaker() {
               transformOrigin: 'bottom center',
             }}
           >
-            <img
-              src={person.imageUrl}
-              alt={person.name}
-              draggable={false}
+            <div
+              className="podcast-person-image-bg"
+              style={{ backgroundImage: `url(${person.imageUrl})` }}
             />
           </div>
         )}
