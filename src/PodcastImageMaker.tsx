@@ -120,8 +120,6 @@ function PodcastImageMaker() {
 
   // Refs
   const canvasRef = useRef<HTMLDivElement>(null)
-  const wideCanvasRef = useRef<HTMLDivElement>(null)
-  const squareCanvasRef = useRef<HTMLDivElement>(null)
   const hostFileRef = useRef<HTMLInputElement>(null)
   const guestFileRef = useRef<HTMLInputElement>(null)
   const previewWrapperRef = useRef<HTMLDivElement>(null)
